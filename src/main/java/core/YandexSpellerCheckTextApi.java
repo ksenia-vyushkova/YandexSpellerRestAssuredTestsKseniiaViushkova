@@ -83,6 +83,11 @@ public class YandexSpellerCheckTextApi {
             return this;
         }
 
+        public ApiBuilder textFormat(YandexSpellerConstants.TextFormat textFormat) {
+            spellerApi.params.put(YandexSpellerConstants.PARAM_FORMAT, textFormat.type);
+            return this;
+        }
+
         public Response callApi() {
             return RestAssured.with()
                     .queryParams(spellerApi.params)

@@ -23,4 +23,19 @@ public enum TestText {
     public String wrongVer() {
         return wrongVer;
     }
+
+    public static Object[][] getTextsWithCorrectionsSmokeTestData() {
+        return new Object[][]{
+                {"карова", "корова"},
+                {"малако", "молоко"},
+                {"облоко", "облако"},
+                {"перескоп", "перископ"},
+                {"пречина", "причина"},
+                {"колобог", "колобок"},
+                {"машына", "машина"},
+                {"побдорка", "подборка"},
+                {"працэнт", "процент"},
+                {"абажюр", "абажур"}
+        };
+    }
 }

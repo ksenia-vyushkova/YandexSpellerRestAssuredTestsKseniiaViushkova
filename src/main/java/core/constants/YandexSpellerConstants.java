@@ -6,6 +6,7 @@ public class YandexSpellerConstants {
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_OPTIONS = "options";
     public static final String PARAM_LANG = "lang";
+    public static final String PARAM_FORMAT = "format";
     public static final String QUOTES = "\"";
 
 
@@ -17,6 +18,17 @@ public class YandexSpellerConstants {
 
         Language(String lang) {
             this.languageCode = lang;
+        }
+    }
+
+    public enum TextFormat {
+        PLAIN("plain"),
+        HTML("html");
+
+        public String type;
+
+        TextFormat(String type) {
+            this.type = type;
         }
     }
 

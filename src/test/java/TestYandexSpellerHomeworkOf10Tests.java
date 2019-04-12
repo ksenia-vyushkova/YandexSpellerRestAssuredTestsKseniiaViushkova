@@ -10,8 +10,11 @@ import org.junit.runners.Parameterized;
 
 import java.util.List;
 
+import static core.constants.Options.FIND_REPEAT_WORDS;
+import static core.constants.Options.computeOptions;
 import static core.constants.TestText.*;
 import static core.matchers.ContainsCorrection.containsCorrection;
+import static core.matchers.ContainsError.containsError;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -89,6 +92,30 @@ public class TestYandexSpellerHomeworkOf10Tests {
         }
 
         @Test
+        public void unknownWordTest() {
+            List<YandexSpellerAnswer> answers =
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(QWERTY.wrongVer()).callApi());
+            assertThat("error ERROR_UNKNOWN_WORD expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_UNKNOWN_WORD));
+        }
+
+        @Test
+        public void findRepeatWordTest() {
+            List<YandexSpellerAnswer> answers =
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(REPEAT_TEXT.wrongVer()).options(computeOptions(FIND_REPEAT_WORDS)).callApi());
+            assertThat("error ERROR_REPEAT_WORD expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_REPEAT_WORD));
+        }
+
+        @Test
+        public void capitalizationTest() {
+            List<YandexSpellerAnswer> answers =
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(INCORRECT_CAPITALIZATION.wrongVer()).callApi());
+            assertThat("error ERROR_CAPITALIZATION expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_CAPITALIZATION));
+        }
+
+        @Test
         public void textFormatTest() {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
@@ -100,11 +127,12 @@ public class TestYandexSpellerHomeworkOf10Tests {
         }
 
         @Test
-        public void restrictionsTest() {
-            List<YandexSpellerAnswer> answers =
-                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                            YandexSpellerCheckTextApi.with().text(LARGE_TEXT.wrongVer()).callApiWithPOST());
-            answers.forEach(answer -> assertThat(answer.pos, lessThan(MAX_POS)));
+        public void slaTest() {
+            YandexSpellerCheckTextApi.with()
+                    .text(LARGE_TEXT.wrongVer())
+                    .callApiWithPOST()
+                    .then()
+                    .time(lessThan(5000L));
         }
     }
 }

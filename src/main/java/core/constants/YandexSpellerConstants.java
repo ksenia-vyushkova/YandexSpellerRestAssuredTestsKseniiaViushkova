@@ -32,7 +32,7 @@ public class YandexSpellerConstants {
         }
     }
 
-    public enum ErrorCodes {
+    public enum ErrorCode {
         ERROR_UNKNOWN_WORD("1"),
         ERROR_REPEAT_WORD("2"),
         ERROR_CAPITALIZATION("3"),
@@ -40,7 +40,7 @@ public class YandexSpellerConstants {
 
         private String code;
 
-        ErrorCodes(String code) {
+        ErrorCode(String code) {
             this.code = code;
         }
 

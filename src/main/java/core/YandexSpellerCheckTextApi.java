@@ -94,5 +94,13 @@ public class YandexSpellerCheckTextApi {
                     .log().all()
                     .get(YANDEX_SPELLER_API_URI).prettyPeek();
         }
+
+        public Response callApiWithPOST() {
+            return RestAssured.with()
+                    .params(spellerApi.params)
+                    .contentType(ContentType.URLENC.withCharset("UTF-8"))
+                    .log().all()
+                    .post(YANDEX_SPELLER_API_URI).prettyPeek();
+        }
     }
 }

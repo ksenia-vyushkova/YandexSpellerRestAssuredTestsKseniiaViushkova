@@ -95,7 +95,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(INCORRECT_ENCODING.wrongVer()).callApi());
-            assertThat("results not empty", answers.isEmpty());
+            assertThat("unexpected results for incorrect encoding", answers.isEmpty());
         }
 
         @Test
@@ -103,7 +103,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(QWERTY.wrongVer()).callApi());
-            assertThat("error ERROR_UNKNOWN_WORD expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_UNKNOWN_WORD));
+            assertThat("error ERROR_UNKNOWN_WORD expected, but not present", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_UNKNOWN_WORD));
         }
 
         @Test
@@ -111,7 +111,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(REPEAT_TEXT.wrongVer()).options(computeOptions(FIND_REPEAT_WORDS)).callApi());
-            assertThat("error ERROR_REPEAT_WORD expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_REPEAT_WORD));
+            assertThat("error ERROR_REPEAT_WORD expected, but not present", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_REPEAT_WORD));
         }
 
         @Test
@@ -119,7 +119,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(INCORRECT_CAPITALIZATION.wrongVer()).callApi());
-            assertThat("error ERROR_CAPITALIZATION expected", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_CAPITALIZATION));
+            assertThat("error ERROR_CAPITALIZATION expected, but not present", answers, containsError(YandexSpellerConstants.ErrorCode.ERROR_CAPITALIZATION));
         }
 
         @Test
@@ -130,7 +130,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
                                     .textFormat(YandexSpellerConstants.TextFormat.HTML)
                                     .text(HTML_SENTENCE.wrongVer())
                                     .callApi());
-            assertThat("html markup not ignored", answers, not(containsCorrection(TestText.OPECHATKA)));
+            assertThat("html markup not ignored when using format=html", answers, not(containsCorrection(TestText.OPECHATKA)));
         }
 
         @Test

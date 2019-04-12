@@ -1,8 +1,9 @@
 import beans.YandexSpellerAnswer;
 import core.YandexSpellerCheckTextApi;
+import core.assertj.CustomSoftAssertions;
 import core.constants.TestText;
 import core.constants.YandexSpellerConstants;
-import org.assertj.core.api.SoftAssertions;
+import core.model.YandexSpellerAnswers;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -15,13 +16,16 @@ import static core.constants.Options.computeOptions;
 import static core.constants.TestText.*;
 import static core.matchers.ContainsCorrection.containsCorrection;
 import static core.matchers.ContainsError.containsError;
+import static core.matchers.PosLessThen.posLessThen;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(Enclosed.class)
 public class TestYandexSpellerHomeworkOf10Tests {
 
     private static int MAX_POS = 10000;
+    private static long MAX_TIME = 5000L;
 
     @RunWith(Parameterized.class)
     public static class ParameterizedTests {
@@ -50,7 +54,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(testText.corrVer()).callApi());
-            assertThat("expected number of answers is wrong", answers.size(), equalTo(0));
+            assertThat("expected number of answers is wrong", answers.isEmpty());
         }
     }
 
@@ -58,27 +62,30 @@ public class TestYandexSpellerHomeworkOf10Tests {
 
         @Test
         public void defaultLanguageTest() {
-            SoftAssertions softAssertions = new SoftAssertions();
+            CustomSoftAssertions softAssertions = new CustomSoftAssertions();
             //1. Check ru word returns corrections
-            List<YandexSpellerAnswer> answers =
+            YandexSpellerAnswers answers = new YandexSpellerAnswers(
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                            YandexSpellerCheckTextApi.with().text(RU_WORD.wrongVer()).callApi());
-            softAssertions.assertThat(answers.get(0).s).contains(RU_WORD.corrVer());
+                            YandexSpellerCheckTextApi.with().text(RU_WORD.wrongVer()).callApi()));
+            softAssertions.assertThat(answers).containsCorrection(RU_WORD);
 
             //2. Check ru word returns corrections
-            answers = YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                    YandexSpellerCheckTextApi.with().text(EN_WORD.wrongVer()).callApi());
-            softAssertions.assertThat(answers.get(0).s).contains(EN_WORD.corrVer());
+            answers = new YandexSpellerAnswers(
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(EN_WORD.wrongVer()).callApi()));
+            softAssertions.assertThat(answers).containsCorrection(EN_WORD);
 
             //3. Check uk word does not return corrections
-            answers = YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                    YandexSpellerCheckTextApi.with().text(UK_WORD.wrongVer()).callApi());
-            softAssertions.assertThat(answers.size()).isEqualTo(0);
+            answers = new YandexSpellerAnswers(
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(UK_WORD.wrongVer()).callApi()));
+            softAssertions.assertThat(answers).isResultsEmpty();
 
             //4. Check fr word does not return corrections
-            answers = YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                    YandexSpellerCheckTextApi.with().text(FR_WORD.wrongVer()).callApi());
-            softAssertions.assertThat(answers.size()).isEqualTo(0);
+            answers = new YandexSpellerAnswers(
+                    YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                            YandexSpellerCheckTextApi.with().text(FR_WORD.wrongVer()).callApi()));
+            softAssertions.assertThat(answers).isResultsEmpty();
 
             softAssertions.assertAll();
         }
@@ -88,7 +95,7 @@ public class TestYandexSpellerHomeworkOf10Tests {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with().text(INCORRECT_ENCODING.wrongVer()).callApi());
-            assertThat("results not empty", answers.size(), equalTo(0));
+            assertThat("results not empty", answers.isEmpty());
         }
 
         @Test
@@ -127,12 +134,19 @@ public class TestYandexSpellerHomeworkOf10Tests {
         }
 
         @Test
+        public void restrictionsTest() {
+            List<YandexSpellerAnswer> answers = YandexSpellerCheckTextApi.getYandexSpellerAnswers(
+                    YandexSpellerCheckTextApi.with().text(LARGE_TEXT.wrongVer()).callApiWithPOST());
+            assertThat("word position is higher than expected", answers, posLessThen(MAX_POS));
+        }
+
+        @Test
         public void slaTest() {
             YandexSpellerCheckTextApi.with()
                     .text(LARGE_TEXT.wrongVer())
                     .callApiWithPOST()
                     .then()
-                    .time(lessThan(5000L));
+                    .time(lessThan(MAX_TIME));
         }
     }
 }

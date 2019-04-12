@@ -22,10 +22,20 @@ public class ContainsCorrection extends TypeSafeMatcher<List<YandexSpellerAnswer
 
     @Override
     public boolean matchesSafely(List<YandexSpellerAnswer> answers) {
-        return answers.stream().anyMatch(answer -> answer.s.contains(testText.corrVer()));
+        return isContainingWord(answers) && isContainingCorrectionForWord(answers);
     }
 
     public void describeTo(Description description) {
         description.appendText("corrections list contains <" + testText.corrVer() + ">");
+    }
+
+    private boolean isContainingWord(List<YandexSpellerAnswer> answers) {
+        return answers.stream().anyMatch(answer -> answer.word.contains(testText.wrongVer()));
+    }
+
+    private boolean isContainingCorrectionForWord(List<YandexSpellerAnswer> answers) {
+        return answers.stream()
+                .filter(answer -> answer.word.contains(testText.wrongVer()))
+                .allMatch(answer -> answer.s.contains(testText.corrVer()));
     }
 }

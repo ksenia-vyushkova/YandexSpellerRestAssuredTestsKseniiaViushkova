@@ -9,8 +9,9 @@ import org.junit.runners.Parameterized;
 
 import java.util.List;
 
+import static core.constants.TestText.HTML_SENTENCE;
+import static core.matchers.ContainsCorrection.containsCorrection;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 @RunWith(Enclosed.class)
@@ -19,12 +20,10 @@ public class TestYandexSpellerHomeworkOf10Tests {
     @RunWith(Parameterized.class)
     public static class ParameterizedTests {
 
-        private String text;
-        private String expectedCorrection;
+        private TestText testText;
 
-        public ParameterizedTests(String text, String expectedCorrection) {
-            this.text = text;
-            this.expectedCorrection = expectedCorrection;
+        public ParameterizedTests(TestText testText) {
+            this.testText = testText;
         }
 
         @Parameterized.Parameters
@@ -36,9 +35,8 @@ public class TestYandexSpellerHomeworkOf10Tests {
         public void textsWithCorrectionsSmokeTest() {
             List<YandexSpellerAnswer> answers =
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
-                            YandexSpellerCheckTextApi.with().text(text).callApi());
-            assertThat(answers.get(0).word, equalTo(text));
-            assertThat(answers.get(0).s.get(0), equalTo(expectedCorrection));
+                            YandexSpellerCheckTextApi.with().text(testText.wrongVer()).callApi());
+            assertThat(answers, containsCorrection(testText));
         }
     }
 
@@ -49,13 +47,9 @@ public class TestYandexSpellerHomeworkOf10Tests {
                     YandexSpellerCheckTextApi.getYandexSpellerAnswers(
                             YandexSpellerCheckTextApi.with()
                                     .textFormat(YandexSpellerConstants.TextFormat.HTML)
-                                    .text("Карова" +
-                                            "&lt;span class=\"опечтка\"&gt;" +
-                                            "пъет" +
-                                            "&lt;/span&gt;" +
-                                            "малако")
+                                    .text(HTML_SENTENCE.wrongVer())
                                     .callApi());
-            assertThat(answers.get(1).word, not("опечтка"));
+            assertThat(answers, not(containsCorrection(TestText.OPECHATKA)));
         }
     }
 }

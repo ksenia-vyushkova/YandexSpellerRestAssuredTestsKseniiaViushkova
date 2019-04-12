@@ -6,7 +6,19 @@ public enum TestText {
     UK_WORD("питання", "питаня"),
     RU_WORD("сметана", "смитана"),
     RU_WRONG_CAPITAL("Санкт-Петербург", "санкт-петербург"),
-    EN_WITH_DIGITS("father", "122father");
+    EN_WITH_DIGITS("father", "122father"),
+    KOROVA("корова", "карова"),
+    MOLOKO("молоко", "малако"),
+    OBLAKO("облако", "облоко"),
+    PERISKOP("перископ", "перескоп"),
+    PRICHINA("причина", "пречина"),
+    KOLOBOK("колобок", "колобог"),
+    MASHINA("машина", "машына"),
+    PODBORKA("подборка", "побдорка"),
+    PROTSENT("процент", "працэнт"),
+    ABAJUR("абажур", "абажюр"),
+    OPECHATKA("опечатка", "опечтка"),
+    HTML_SENTENCE("Корова<span class=\"опечтка\">пьет</span>молоко", "Карова<span class=\"опечтка\">пъет</span>малако");
 
     private String corrVer;
     private String wrongVer;
@@ -26,16 +38,16 @@ public enum TestText {
 
     public static Object[][] getTextsWithCorrectionsSmokeTestData() {
         return new Object[][]{
-                {"карова", "корова"},
-                {"малако", "молоко"},
-                {"облоко", "облако"},
-                {"перескоп", "перископ"},
-                {"пречина", "причина"},
-                {"колобог", "колобок"},
-                {"машына", "машина"},
-                {"побдорка", "подборка"},
-                {"працэнт", "процент"},
-                {"абажюр", "абажур"}
+                {KOROVA},
+                {MOLOKO},
+                {OBLAKO},
+                {PERISKOP},
+                {PRICHINA},
+                {KOLOBOK},
+                {MASHINA},
+                {PODBORKA},
+                {PROTSENT},
+                {ABAJUR}
         };
     }
 }
